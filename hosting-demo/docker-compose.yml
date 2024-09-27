@@ -7,6 +7,10 @@ services:
     environment:
       MYSQL_DATABASE: usersdb
       MYSQL_ROOT_PASSWORD: minhhieu2503
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
     networks:
       - host
   users:
@@ -14,6 +18,9 @@ services:
     container_name: hosting-ms
     ports:
       - "8080:8080"
+    depends_on:
+      usersdb:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "hosting-demo"
       SPRING_DATASOURCE_URL: "jdbc:mysql://usersdb:3306/usersdb"
